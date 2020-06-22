@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { FormBuilder ,Validators } from '@angular/forms';
+
+import { LoadingController } from '@ionic/angular';
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook/ngx';
+import { AngularFireAuth } from '@angular/fire/auth';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-login',
@@ -10,6 +15,7 @@ import { FormBuilder ,Validators } from '@angular/forms';
 })
 export class LoginPage implements OnInit {
 
+  loading: any;
 
   loginForm = this.formBuilder.group({
     username:  [
@@ -28,10 +34,22 @@ export class LoginPage implements OnInit {
     private authService:AuthenticationService, 
     private router: Router,
     private formBuilder:FormBuilder,
+    private fb: Facebook,
+    public loadingController: LoadingController,
+    private fireAuth: AngularFireAuth
     ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.loading = await this.loadingController.create({
+      message: 'Connecting ...'
+    });
   }
+
+
+  async presentLoading(loading) {
+    await loading.present();
+  }
+
 
   login()
   {
@@ -42,6 +60,49 @@ export class LoginPage implements OnInit {
   {
       this.router.navigate(['public','register'])
   }
+
+  loginFacebook1()
+  {
+    console.log("facebook Login")
+
+  }
+
+  async loginFacebook() {
+    this.fb.login(['email'])
+      .then((response: FacebookLoginResponse) => {
+        this.onLoginSuccess(response);
+        console.log(response.authResponse.accessToken);
+      }).catch((error) => {
+        console.log(error)
+        alert('error:' + error)
+      });
+  }
+  onLoginSuccess(res: FacebookLoginResponse) {
+    // const { token, secret } = res;
+    const credential = firebase.auth.FacebookAuthProvider.credential(res.authResponse.accessToken);
+    this.fireAuth.signInWithCredential(credential)
+      .then((response) => {
+        //alert(JSON.stringify(response.user))
+        let navigationExtras: NavigationExtras = {
+          queryParams: {
+            socialData: JSON.stringify(response.user),
+            loginType:'facebook'
+          }
+        };
+        this.router.navigate(['public','register'],navigationExtras)
+        this.loading.dismiss();
+      })
+
+  }
+  onLoginError(err) {
+    console.log(err);
+  }
+
+
+
+
+
+
 
   get username() {
     return this.loginForm.get("username");
