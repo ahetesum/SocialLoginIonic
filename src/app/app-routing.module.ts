@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGaurdService } from './services/auth-gaurd.service';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'public', pathMatch: 'full' },
   {
-    path: '',
-    redirectTo: 'folder/Inbox',
-    pathMatch: 'full'
+    path: 'public',
+    loadChildren: () => import('./public/public-routing.module').then( m => m.PublicRoutingModule)
   },
+
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  }
+    path: 'members',
+    canActivate: [AuthGaurdService],
+    loadChildren: () => import('./members/member-routing.module').then( m => m.MemberRoutingModule)
+  },
 ];
 
 @NgModule({
@@ -19,4 +22,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

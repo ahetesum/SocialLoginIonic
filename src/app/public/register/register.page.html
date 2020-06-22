@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" >
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Sign Up</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col  text-center>
+            <img class="center" src="../../../assets/logo-city.jpg" height="75" width="75" />
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-header>
+    <ion-card-content>
+      <form  [formGroup]="registrationForm" (ngSubmit)="register()" method="post">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating">Name</ion-label>
+              <ion-input ngModel type='text' formControlName="name" ></ion-input>
+            </ion-item>  
+            <div *ngFor="let error of errorMessages.name">
+              <ng-container *ngIf="name.hasError(error.type) && (name.dirty || name.touched)">
+                <small class="error-message">{{error.message}}</small>
+              </ng-container>
+            </div>    
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+            <ion-item>
+              <ion-label position="floating">Email</ion-label>
+              <ion-input ngModel type='email' formControlName="username" ></ion-input>
+            </ion-item>  
+            <div *ngFor="let error of errorMessages.username">
+              <ng-container *ngIf="username.hasError(error.type) && (username.dirty || username.touched)">
+                <small class="error-message">{{error.message}}</small>
+              </ng-container>
+            </div>    
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+            <ion-item>
+              <ion-label position="floating">Password</ion-label>
+              <ion-input ngModel type='password' formControlName="password"></ion-input>
+            </ion-item> 
+            <div *ngFor="let error of errorMessages.password">
+              <ng-container *ngIf="password.hasError(error.type) && (password.dirty || password.touched)">
+                <small class="error-message">{{error.message}}</small>
+              </ng-container>
+            </div>      
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+            <ion-item>
+              <ion-label position="floating">Phone</ion-label>
+              <ion-input ngModel type='tel' formControlName="phone_no"></ion-input>
+            </ion-item> 
+            <div *ngFor="let error of errorMessages.phone_no">
+              <ng-container *ngIf="phone_no.hasError(error.type) && (phone_no.dirty || phone_no.touched)">
+                <small class="error-message">{{error.message}}</small>
+              </ng-container>
+            </div>     
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+            <ion-item>
+              <ion-label>Select City</ion-label>
+              <ion-select ngModel  formControlName="city_id" okText="Okay" cancelText="Dismiss">
+                <ion-select-option value="1">Bangalore</ion-select-option>
+                <ion-select-option value="2">Delhi</ion-select-option>
+                <ion-select-option value="3">Chennai</ion-select-option>
+                <ion-select-option value="4">Mumbai</ion-select-option>
+                <ion-select-option value="5">Kolkata</ion-select-option>
+              </ion-select>
+            </ion-item>   
+            <div *ngFor="let error of errorMessages.city_id">
+              <ng-container *ngIf="city_id.hasError(error.type) && (city_id.dirty || city_id.touched)">
+                <small class="error-message">{{error.message}}</small>
+              </ng-container>
+            </div>  
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col >
+            <ion-button  [disabled]="!registrationForm.valid" type="submit" expand="full" color="primary"  >Sign Up</ion-button>     
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
+
