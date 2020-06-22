@@ -4,6 +4,15 @@
 
 export const environment = {
   production: false,
+  config: {
+    apiKey: "AIzaSyBsegicvyj_rpAQh-Quy2orKC95Jt78QGo",
+    authDomain: "ionic-login-app2.firebaseapp.com",
+    databaseURL: "https://ionic-login-app2.firebaseio.com",
+    projectId: "ionic-login-app2",
+    storageBucket: "ionic-login-app2.appspot.com",
+    messagingSenderId: "385896613834",
+    appId: "1:385896613834:web:658f7480b757e74f89f133"
+  }
 };
 
 /*
