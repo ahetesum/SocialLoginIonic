@@ -39,7 +39,7 @@
           <ion-col >
             <ion-item>
               <ion-label position="floating">Email</ion-label>
-              <ion-input ngModel type='email' formControlName="username" ></ion-input>
+              <ion-input ngModel type='email' formControlName="username" [readonly]="isSocialLogin" ></ion-input>
             </ion-item>  
             <div *ngFor="let error of errorMessages.username">
               <ng-container *ngIf="username.hasError(error.type) && (username.dirty || username.touched)">

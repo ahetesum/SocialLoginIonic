@@ -53,7 +53,8 @@ export class LoginPage implements OnInit {
 
   login()
   {
-      this.authService.login(this.loginForm.value);
+      this.authService.login(this.loginForm.value, "email");
+        this.loading.dismiss();
   }
 
   toRegister()
@@ -61,11 +62,13 @@ export class LoginPage implements OnInit {
       this.router.navigate(['public','register'])
   }
 
-  loginFacebook1()
+  loginGoogle()
   {
-    console.log("facebook Login")
+    this.router.navigate(['public','register'])
 
   }
+
+
 
   async loginFacebook() {
     this.fb.login(['email'])
@@ -83,13 +86,33 @@ export class LoginPage implements OnInit {
     this.fireAuth.signInWithCredential(credential)
       .then((response) => {
         //alert(JSON.stringify(response.user))
-        let navigationExtras: NavigationExtras = {
-          queryParams: {
-            socialData: JSON.stringify(response.user),
-            loginType:'facebook'
-          }
-        };
-        this.router.navigate(['public','register'],navigationExtras)
+        let faceBookUser={};
+        if(response.user )
+        {
+            if(response.user.displayName)
+            {
+              faceBookUser['login_type']="facebook";
+              faceBookUser['name']=response.user.displayName;
+              faceBookUser['username']=response.user.email;
+              faceBookUser['token']= response.user.refreshToken
+            }
+            let loginData= {};
+            loginData["username"]= response.user.email
+
+            let fail=this.authService.login(loginData,"facebook");
+          //////////////After check///////////
+            if(fail==-1)
+            {
+              let navigationExtras: NavigationExtras = {
+                queryParams: {
+                  socialData: JSON.stringify(faceBookUser),
+                }
+              };
+              this.router.navigate(['public','register'],navigationExtras)
+            }
+        
+        }
+
         this.loading.dismiss();
       })
 
@@ -97,11 +120,6 @@ export class LoginPage implements OnInit {
   onLoginError(err) {
     console.log(err);
   }
-
-
-
-
-
 
 
   get username() {

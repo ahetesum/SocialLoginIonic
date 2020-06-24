@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder ,Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,9 +9,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage implements OnInit {
+  
+  data:any
+  newUser:any
+  isSocialLogin:boolean
 
   registrationForm = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
+    name: [ '' , [Validators.required, Validators.maxLength(100)]],
     username:  [
       '',
       [
@@ -32,16 +36,53 @@ export class RegisterPage implements OnInit {
 
   constructor(
     private authService:AuthenticationService, 
+    private route: ActivatedRoute,
     private router: Router, 
     private formBuilder:FormBuilder
-    ) { }
+    ) { 
+      this.route.queryParams.subscribe(params => {
+        if (params && params.socialData) {
+          this.data = JSON.parse(params.socialData);
+
+        }
+        else{
+          this.data={};
+          this.data["login_type"]="facebook";
+          this.data['name']="Ahetesum Ali Biswas";
+          this.data['username']="mail.ahliwasum@gmail.com";
+          this.data['token']="vdfgsdfgdfgdfgdfgsdfgdfg";
+        }
+      });
+    }
 
   ngOnInit() {
   }
 
+ionViewDidEnter(){
+  if(this.data)
+  {
+    this.registrationForm.controls['name'].setValue(this.data.name);
+    this.registrationForm.controls['username'].setValue(this.data.username);
+    this.registrationForm.controls['name'].patchValue(this.data.name);
+    this.registrationForm.controls['username'].patchValue(this.data.username);
+    this.registrationForm.controls['password'].disable();
+    this.registrationForm.controls['username'].updateValueAndValidity();
+    this.registrationForm.controls['name'].updateValueAndValidity();
+    this.isSocialLogin=true;
+  }
+
+
+}
+
   register(){
     console.log(this.registrationForm.value)
-    this.authService.register((this.registrationForm.value));
+    this.newUser={};
+    if(!this.data)
+    {
+      this.data = {};
+      this.data["login_type"]= "email";
+    }
+    this.authService.register(this.registrationForm.value , this.data.login_type);
   }
 
 
@@ -52,6 +93,7 @@ export class RegisterPage implements OnInit {
   get username() {
     return this.registrationForm.get("username");
   }
+
   get password() {
     return this.registrationForm.get("password");
   }
